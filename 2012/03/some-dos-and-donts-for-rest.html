@@ -99,16 +99,53 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>I’ve been googling around about ReST and how URIs should look like and I found this particular gem. It’s available at <a href="http://stackoverflow.com/questions/1619152/how-to-create-rest-urls-without-verbs/1619677#1619677" target="_blank" rel="external">Stack Overflow</a>, but I just wanted it posted here for reference. Of course all credits go to <a href="http://stackoverflow.com/users/90723/bob-aman" target="_blank" rel="external">Bob Aman</a>, the author of said answer. So here goes.</p>
-<h3 id="General_principles_for_good_URI_design:">General principles for good URI design:</h3><blockquote><p>Don’t use query parameters to alter state<br>Don’t use mixed-case paths if you can help it; lowercase is best<br>Don’t use implementation-specific extensions in your URIs (.php, .py, .pl, etc.)<br>Don’t fall into RPC with your URIs<br>Do limit your URI space as much as possible<br>Do keep path segments short<br>Do prefer either /resource or /resource/; create 301 redirects from the one you don’t use<br>Do use query parameters for sub-selection of a resource; i.e. pagination, search queries<br>Do move stuff out of the URI that should be in an HTTP header or a body</p>
-</blockquote>
-<h3 id="General_principles_for_HTTP_method_choice:">General principles for HTTP method choice:</h3><blockquote><p>Don’t ever use GET to alter state; this is a great way to have the Googlebot ruin your day<br>Don’t use PUT unless you are updating an entire resource<br>Don’t use PUT unless you can also legitimately do a GET on the same URI<br>Don’t use POST to retrieve information that is long-lived or that might be reasonable to cache<br>Don’t perform an operation that is not idempotent with PUT<br>Do use GET for as much as possible<br>Do use POST in preference to PUT when in doubt<br>Do use POST whenever you have to do something that feels RPC-like<br>Do use PUT for classes of resources that are larger or hierarchical<br>Do use DELETE in preference to POST to remove resources<br>Do use GET for things like calculations, unless your input is large, in which case use POST</p>
-</blockquote>
-<h3 id="General_principles_of_web_service_design_with_HTTP:">General principles of web service design with HTTP:</h3><blockquote><p>Don’t put metadata in the body of a response that should be in a header<br>Don’t put metadata in a separate resource unless including it would create significant overhead<br>Do use the appropriate status code<br>201 Created after creating a resource; resource must exist at the time the response is sent<br>202 Accepted after performing an operation successfully or creating a resource asynchronously<br>400 Bad Request when someone does an operation on data that’s clearly bogus; for your application this could be a validation error; generally reserve 500 for uncaught exceptions<br>403 Forbidden when someone accesses your API in a way that might be malicious or if they aren’t authorized<br>405 Method Not Allowed when someone uses POST when they should have used PUT, etc<br>413 Request Entity Too Large when someone attempts to send you an unacceptably large file<br>418 I’m a teapot when attempting to brew coffee with a teapot<br>Do use caching headers whenever you can<br>ETag headers are good when you can easily reduce a resource to a hash value<br>Last-Modified should indicate to you that keeping around a timestamp of when resources are updated is a good idea<br>Cache-Control and Expires should be given sensible values<br>Do everything you can to honor caching headers in a request (If-None-Modified, If-Modified-Since)<br>Do use redirects when they make sense, but these should be rare for a web service</p>
-</blockquote>
+<h3 id="General_principles_for_good_URI_design:">General principles for good URI design:</h3><ul>
+<li>Don’t use query parameters to alter state</li>
+<li>Don’t use mixed-case paths if you can help it; lowercase is best</li>
+<li>Don’t use implementation-specific extensions in your URIs (.php, .py, .pl, etc.)</li>
+<li>Don’t fall into RPC with your URIs</li>
+<li>Do limit your URI space as much as possible</li>
+<li>Do keep path segments short</li>
+<li>Do prefer either /resource or /resource/; create 301 redirects from the one you don’t use</li>
+<li>Do use query parameters for sub-selection of a resource; i.e. pagination, search queries</li>
+<li>Do move stuff out of the URI that should be in an HTTP header or a body</li>
+</ul>
+<h3 id="General_principles_for_HTTP_method_choice:">General principles for HTTP method choice:</h3><ul>
+<li>Don’t ever use GET to alter state; this is a great way to have the Googlebot ruin your day</li>
+<li>Don’t use PUT unless you are updating an entire resource</li>
+<li>Don’t use PUT unless you can also legitimately do a GET on the same URI</li>
+<li>Don’t use POST to retrieve information that is long-lived or that might be reasonable to cache</li>
+<li>Don’t perform an operation that is not idempotent with PUT</li>
+<li>Do use GET for as much as possible</li>
+<li>Do use POST in preference to PUT when in doubt</li>
+<li>Do use POST whenever you have to do something that feels RPC-like</li>
+<li>Do use PUT for classes of resources that are larger or hierarchical</li>
+<li>Do use DELETE in preference to POST to remove resources</li>
+<li>Do use GET for things like calculations, unless your input is large, in which case use POST</li>
+</ul>
+<h3 id="General_principles_of_web_service_design_with_HTTP:">General principles of web service design with HTTP:</h3><ul>
+<li>Don’t put metadata in the body of a response that should be in a header</li>
+<li>Don’t put metadata in a separate resource unless including it would create significant overhead</li>
+<li>Do use the appropriate status code</li>
+<li>201 Created after creating a resource; resource must exist at the time the response is sent</li>
+<li>202 Accepted after performing an operation successfully or creating a resource asynchronously</li>
+<li>400 Bad Request when someone does an operation on data that’s clearly bogus; for your application this could be a validation error; generally reserve 500 for uncaught exceptions</li>
+<li>403 Forbidden when someone accesses your API in a way that might be malicious or if they aren’t authorized</li>
+<li>405 Method Not Allowed when someone uses POST when they should have used PUT, etc</li>
+<li>413 Request Entity Too Large when someone attempts to send you an unacceptably large file</li>
+<li>418 I’m a teapot when attempting to brew coffee with a teapot</li>
+<li>Do use caching headers whenever you can</li>
+<li>ETag headers are good when you can easily reduce a resource to a hash value</li>
+<li>Last-Modified should indicate to you that keeping around a timestamp of when resources are updated is a good idea</li>
+<li>Cache-Control and Expires should be given sensible values</li>
+<li>Do everything you can to honor caching headers in a request (If-None-Modified, If-Modified-Since)</li>
+<li>Do use redirects when they make sense, but these should be rare for a web service</li>
+</ul>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.piotrbuda.eu/2012/03/some-dos-and-donts-for-rest.html" data-id="ci9axxg6v001f2l1vvp94x508" class="article-share-link">Share</a>
+      <a data-url="http://www.piotrbuda.eu/2012/03/some-dos-and-donts-for-rest.html" data-id="ci9ayirml001fk21vfjp98hik" class="article-share-link">Share</a>
       
         <a href="http://www.piotrbuda.eu/2012/03/some-dos-and-donts-for-rest.html#disqus_thread" class="article-comment-link">Comments</a>
       
