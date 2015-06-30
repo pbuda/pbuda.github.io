@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Pony lang capabilities - understanding the defaults | Software Development Ramblings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/pure-min.css" type="text/css">
+  <link rel="stylesheet" href="/css/biture.css" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header">
+    <div class="wrap">
+  <div class="inner">
+    <a class="brand" href="/">Software Development Ramblings</a>
+    <a id="menu-toggle" href="#"><i class="fa fa-bars"></i></a>
+<ul class="nav-menu">
+
+</ul>
+
+<ul class="nav-menu ext-menu">
+
+
+    <li><a href="//github.com/pbuda/">github</a></li>
+
+
+
+    <li><a href="//twitter.com/piotrbuda">twitter</a></li>
+
+
+
+    <li><a href="//pl.linkedin.com/in/piotrbuda">linked-in</a></li>
+
+
+  <li><a class="various" href="#fbox-tagcloud">tags</a></li>
+</ul>
+</div>
+
+  </div>
+</div>
+
+<div class="tagcloud" id="fbox-tagcloud" style="margin:10px; display:none; overflow: hidden"><a href="/tags/actors/" style="font-size: 12px;">actors</a><a href="/tags/api/" style="font-size: 12px;">api</a><a href="/tags/capabilities/" style="font-size: 12px;">capabilities</a><a href="/tags/cloud/" style="font-size: 12px;">cloud</a><a href="/tags/concurrency/" style="font-size: 12px;">concurrency</a><a href="/tags/google-play/" style="font-size: 12px;">google play</a><a href="/tags/openshift/" style="font-size: 12px;">openshift</a><a href="/tags/play/" style="font-size: 12px;">play</a><a href="/tags/play-store-api/" style="font-size: 12px;">play store api</a><a href="/tags/pony-lang/" style="font-size: 12px;">pony lang</a><a href="/tags/sbt/" style="font-size: 12px;">sbt</a><a href="/tags/scala/" style="font-size: 24px;">scala</a><a href="/tags/spray/" style="font-size: 12px;">spray</a><a href="/tags/store/" style="font-size: 12px;">store</a><a href="/tags/websocket/" style="font-size: 12px;">websocket</a></div>
+
+  </header>
+  <div id="main-content" class="wrap">
+  <div class="inner">
+    <article class="post">
+  <div class="pure-g">
+
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2015-06-30T11:18:20.000Z">
+        <div class="day">30</div>
+        <div class="month">Jun 2015</div>
+      </time></div>
+      <div class="article-tags">
+        
+
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title">Pony lang capabilities - understanding the defaults</h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <p>Pony offers concurrency programming using actors. However safe concurrency is hard. In order to make it safe, you have to remember about a few things. First of all, passing mutable data is hard, because concurrent reading and writing to that data can lead to garbage being store, or overwritten state. So concurrent programs have to employ safety mechanisms (such as locks, semaphores) to work with mutable data. However it’s error prone and introduces overhead, not to mention performance impact. <a href="http://tutorial.ponylang.org/capabilities/introduction/" target="_blank" rel="external">Pony tutorial</a> on capabilities mentions two ways of sharing data between actors - sharing immutable data and passing isolated data.</p>
+<p>Sharing immutable data is safe, because once created this data cannot be modified. Think of sharing as moving reference to data around, leaving a trace of it everywhere you want. Isolated data (data for which only one reference exists) is safe, because only one actor can have reference to that data and changing mutable data in one actor is perfectly ok. So passing means that you pass the reference to someone else and don’t store it anymore.</p>
+<p>Pony compiler can perform checks whether your program only shares immutable data or is passing isolated data. To achieve that, Pony introduces a mechanism called capabilities which makes some guarantees about sharing objects with other actors. These guarantees then allow the Pony compiler to check for errors in your code and whether your concurrent app will be safe. At first I found this topic to be confusing so I decided to write a post about it and maybe you, the reader, will have easier time understanding this concept.</p>
+<a id="more"></a>
+<h3 id="Pony_Capabilities">Pony Capabilities</h3><p>Pony capabilities are a kind of qualifier with which you can describe a way the language construct will be used in a concurrent program. There are six capabilities to choose from and some of them are for immutable data, some for isolation and one opaque that prevents object from being accessed.</p>
+<ul>
+<li><code>ref</code> (Reference) is your normal, mutable data. This data can be freely modified and read by a single actor or other variables, but it can’t be shared with other actors.</li>
+<li><code>val</code> (Value) is for immutable data, which means that no-one can modify it, so it’s safe to read and share that data.</li>
+<li><code>iso</code> (Isolated) marks a variable as being isolated so there’s no other variable that has access to that data, therefore it’s safe for your actor to read and write to it.</li>
+<li><code>box</code> (Box) means that this data is read-only to you. There might be other variables writing to that data, but you can only read it.</li>
+<li><code>trn</code> (Transition) allows you to use variable as a write-only.</li>
+<li><code>tag</code> (Tag) is used for identification. You can neither write nor read from that variable, but you can use it to identify objects or share it with other actors.</li>
+</ul>
+<p>Some language constructs specify default capabilities that make sense in most cases. Below we will</p>
+<h3 id="Actor_default">Actor default</h3><p>By default all actors are <code>tag</code>s and you can’t change it - compiler will complain about such attempt:<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Act val&#10;  be dosmth() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/Volumes/</span>Personal<span class="regexp">/pony/</span>capabilities/main.<span class="string">pony:</span><span class="number">12</span>:<span class="number">11</span>: actor cannot specify <span class="keyword">default</span> capability</span><br><span class="line">actor Act val</span><br></pre></td></tr></table></figure>
+<p>By being a <code>tag</code> actors can be safely passed between your objects and you can call behaviors on them.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foo:Foo = Foo&#10;  let a = Act&#10;  foo.dosmth(a)&#10;&#10;class Foo&#10;  new create() =&#62; None&#10;  fun dosmth(a:Act) =&#62;&#10;    a.dosmth()&#10;&#10;actor Act&#10;  be dosmth() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<h3 id="Primitive_default">Primitive default</h3><p>Primitives are always <code>val</code>s and similar to actors you cannot specify a capability for primitives.</p>
+<h3 id="Class_default">Class default</h3><p>When you define a new <code>class</code> by default it’s a <code>ref</code>. This means that when you create a new instance of this class it will default to <code>ref</code> but you can override that by defining a capability on variable (more on that later).</p>
+<p>You can however specify the default capability your new instances will default to:<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foo:Foo = Foo&#10;&#10;class Foo box&#10;  var a:Array[U8] = Array[U8]&#10;  new create() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<p>Variable <code>foo</code> in this case is a <code>box</code>. That is because you specified a default capability in the class definition. If you now try to modify the <code>a</code> variable compiler will complain about unsafe operation<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foo:Foo = Foo&#10;  foo.a = Array[U8]&#10;&#10;class Foo box&#10;  var a:Array[U8] = Array[U8]&#10;  new create() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/Volumes/Personal/pony/capabilities/main.pony:<span class="number">4</span>:<span class="number">9</span>: <span class="operator">not</span> safe <span class="built_in">to</span> <span class="built_in">write</span> <span class="constant">right</span> side <span class="built_in">to</span> left side</span><br><span class="line">  foo.<span class="operator">a</span> = Array[U8]</span><br></pre></td></tr></table></figure>
+<h3 id="Constructor_default">Constructor default</h3><p>Constructors in Pony also have a default return type, which is <code>ref</code>. It’s easily changeable though, by specifying the capability name right after the <code>new</code> keyword.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class Foo val&#10;  new val create() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<p>It is important to remember that while specifying the class default makes your defined variable use the same capability as class, it might be incompatible with the constructor capability.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foov:Foo = Foo&#10;&#10;class Foo val&#10;  new create() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/Volumes/Personal/pony/capabilities/main<span class="class">.pony</span>:<span class="number">3</span>:<span class="number">16</span>: <span class="attribute">right</span> side must be <span class="tag">a</span> subtype of <span class="attribute">left</span> side</span><br><span class="line">  <span class="tag">var</span> foov:Foo = Foo</span><br><span class="line">               ^</span><br><span class="line">/Volumes/Personal/pony/capabilities/main<span class="class">.pony</span>:<span class="number">6</span>:<span class="number">3</span>: <span class="attribute">right</span> side type: Foo ref</span><br><span class="line">  new <span class="function"><span class="title">create</span><span class="params">()</span></span> =&gt; None</span><br><span class="line">  ^</span><br><span class="line">/Volumes/Personal/pony/capabilities/main<span class="class">.pony</span>:<span class="number">3</span>:<span class="number">12</span>: <span class="attribute">left</span> side type: Foo val</span><br><span class="line">  <span class="tag">var</span> foov:Foo = Foo</span><br></pre></td></tr></table></figure>
+<p>One of possible solutions is to specify the returning capability for <code>Foo</code>s constructor.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class Foo val&#10;  new val create() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<p>Another possibility is to use the <code>recover</code> block but this is out of scope of this article.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foov:Foo = recover val Foo end&#10;&#10;class Foo val&#10;  new create() =&#62; None</span><br></pre></td></tr></table></figure></p>
+<h3 id="Function_default">Function default</h3><p>Functions can have capabilities defined in two places in their declaration. The first place is function’s return type<br>capability. This uses class defaults but can be overridden by specifying a concrete capability.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;    let f = Foo&#10;&#10;class Foo&#10;  let a:String = &#34;a&#34;&#10;&#10;  fun get_a():String iso =&#62; a.clone()</span><br></pre></td></tr></table></figure></p>
+<p><code>String</code> is a <code>val</code> by default but here we define in our function that we want the resulting type to be actually <code>String iso</code>.</p>
+<p>The other place you can set the capability on a function declaration is right after the <code>fun</code> keyword. This capability will define<br>how the function can behave. By default this capability is <code>box</code> which means that data in the owner class is read only to that method.<br>This plays well with <code>box</code> definition - there are other places the variables can change (other methods that can change the class fields)<br>but you can only read them. Trying to modify fields in a default <code>box</code> function will make compiler complain<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class Foo&#10;  var a:String = &#34;a&#34;&#10;&#10;  fun get_a():String =&#62;  a = a + &#34;b&#34;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/Volumes/Personal/pony/capabilities/main<span class="class">.pony</span>:<span class="number">4</span>:<span class="number">28</span>: cannot write to <span class="tag">a</span> field <span class="keyword">in</span> <span class="tag">a</span> box function</span><br><span class="line">  fun <span class="function"><span class="title">get_a</span><span class="params">()</span></span>:String =&gt;  <span class="tag">a</span> = <span class="tag">a</span> + <span class="string">"b"</span></span><br><span class="line">                           ^</span><br></pre></td></tr></table></figure>
+<p>But change that to something that is write capable (<code>iso</code>, <code>trn</code>, <code>ref</code>) and you can modify your class contents again<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class Foo&#10;  var a:String = &#34;a&#34;&#10;&#10;  fun ref get_a():String =&#62;  a = a + &#34;b&#34;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Variable_default">Variable default</h3><p>Variables default to whatever they are created for. When instantiating a class, then it will default to <code>ref</code> or<br>if class has a default set, to whatever was set in class definition. For actors it will always be <code>tag</code> because actors<br>are always <code>tag</code>s. For primitives it will be <code>val</code>.</p>
+<p>As mentioned in the section about classes, variables will default to capability specified in class (or <code>ref</code> if none was specified). This can be changed<br>by providing capability name right after type declaration<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foo:Foo iso = recover Foo end&#10;&#10;class Foo val</span><br></pre></td></tr></table></figure></p>
+<p>For function return types however, if you don’t use type inference (you define type of your variable explicitly) then you have to provide the capability that can be used<br>as alias capability (aliasing is out of scope of this article). In the example below we use <code>box</code> as the variable capability but we could also use <code>val</code> or <code>tag</code>. This is because<br>as mentioned before, variables default to whatever is the default of their type.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">actor Main&#10;  new create(env:Env) =&#62;&#10;  var foo:Foo = Foo&#10;  var s:Seq[String] box = foo.get()&#10;&#10;class Foo&#10;  fun get():Seq[String] val =&#62; recover Array[String] end</span><br></pre></td></tr></table></figure></p>
+<h3 id="Summary">Summary</h3><p>Pony capabilities are used throughout the Pony code so some sensible defaults need to be set. Knowledge of these can help you understand compiler warnings and adapt your code to conform to capability rules.</p>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+<section id="comment">
+  <h1 class="title">comment</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+      </div></footer>
+    </div>
+  </div>
+</article>
+
+  </div>
+  </div>
+  <footer id="footer">
+    <div class="wrap">
+  <div class="inner" style="text-align: center">
+    
+    &copy; 2015 Piotr Buda All Rights Reserved
+    
+
+    / <a href="https://github.com/kywk/hexo-theme-biture">biture</a> for <a href="http://zespia.tw/hexo/">hexo</a>
+    / developed by <a href="http://kywk.github.io/moco/">MooCow (kywk)</a>.
+  </div>
+</div>
+
+  </footer>
+<!-- Le javascript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-62603909-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+<!-- Responsive menu -->
+<script>
+$(document).ready(function() {
+  $("#menu-toggle").click(function(event) {
+    event.preventDefault();
+    if ($(this).hasClass("isShow")) {
+      $("#header").css({position: "fixed"});
+      $("ul.nav-menu").hide();
+      $(this).removeClass("isShow");
+    } else {
+      $("#header").css({position: "static"});
+      $("ul.nav-menu").show();
+      $("html, body").scrollTop(0);
+      $(this).addClass("isShow");
+    }
+    return false;
+  });
+
+  $(window).resize(function() {
+    if ($(window).width() > 700) {
+      $("ul.nav-menu").removeAttr('style');
+    }
+  });
+
+});
+</script>
+
+
+
+<script type="text/javascript">
+var disqus_shortname = 'piotrbuda';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+<link rel="stylesheet" href="/package/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/package/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+<script type="text/javascript">
+(function($){
+  $(".fancybox").fancybox();
+  $(".various").fancybox({
+    maxWidth  : 800,
+    maxHeight : 600,
+    fitToView : false,
+    width   : '70%',
+    height    : '70%',
+    autoSize  : true,
+    closeClick  : false,
+    openEffect  : 'none',
+    closeEffect : 'none'
+  });
+})(jQuery);
+</script>
+
+
+</body>
+</html>
