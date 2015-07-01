@@ -1,0 +1,247 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Some DOs and DON&#39;Ts for ReST | Software Development Ramblings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/pure-min.css" type="text/css">
+  <link rel="stylesheet" href="/css/biture.css" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header">
+    <div class="wrap">
+  <div class="inner">
+    <a class="brand" href="/">Software Development Ramblings</a>
+    <a id="menu-toggle" href="#"><i class="fa fa-bars"></i></a>
+<ul class="nav-menu">
+
+</ul>
+
+<ul class="nav-menu ext-menu">
+
+
+    <li><a href="//github.com/pbuda/">github</a></li>
+
+
+
+    <li><a href="//twitter.com/piotrbuda">twitter</a></li>
+
+
+
+    <li><a href="//pl.linkedin.com/in/piotrbuda">linked-in</a></li>
+
+
+
+    <li><a href="//feeds.feedburner.com/SoftwareDevelopmentRamblings">rss</a></li>
+
+
+  <li><a class="various" href="#fbox-tagcloud">tags</a></li>
+</ul>
+</div>
+
+  </div>
+</div>
+
+<div class="tagcloud" id="fbox-tagcloud" style="margin:10px; display:none; overflow: hidden"><a href="/tags/actors/" style="font-size: 12px;">actors</a><a href="/tags/api/" style="font-size: 12px;">api</a><a href="/tags/capabilities/" style="font-size: 24px;">capabilities</a><a href="/tags/cloud/" style="font-size: 12px;">cloud</a><a href="/tags/concurrency/" style="font-size: 24px;">concurrency</a><a href="/tags/defaults/" style="font-size: 12px;">defaults</a><a href="/tags/google-play/" style="font-size: 12px;">google play</a><a href="/tags/openshift/" style="font-size: 12px;">openshift</a><a href="/tags/play/" style="font-size: 12px;">play</a><a href="/tags/play-store-api/" style="font-size: 12px;">play store api</a><a href="/tags/pony/" style="font-size: 12px;">pony</a><a href="/tags/pony-lang/" style="font-size: 12px;">pony lang</a><a href="/tags/sbt/" style="font-size: 12px;">sbt</a><a href="/tags/scala/" style="font-size: 24px;">scala</a><a href="/tags/spray/" style="font-size: 12px;">spray</a><a href="/tags/store/" style="font-size: 12px;">store</a><a href="/tags/websocket/" style="font-size: 12px;">websocket</a></div>
+
+  </header>
+  <div id="main-content" class="wrap">
+  <div class="inner">
+    <article class="post">
+  <div class="pure-g">
+
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2012-03-05T14:00:00.000Z">
+        <div class="day">5</div>
+        <div class="month">Mar 2012</div>
+      </time></div>
+      <div class="article-tags">
+        
+
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title">Some DOs and DON&#39;Ts for ReST</h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <p>I’ve been googling around about ReST and how URIs should look like and I found this particular gem. It’s available at <a href="http://stackoverflow.com/questions/1619152/how-to-create-rest-urls-without-verbs/1619677#1619677" target="_blank" rel="external">Stack Overflow</a>, but I just wanted it posted here for reference. Of course all credits go to <a href="http://stackoverflow.com/users/90723/bob-aman" target="_blank" rel="external">Bob Aman</a>, the author of said answer. So here goes.</p>
+<h3 id="General_principles_for_good_URI_design:">General principles for good URI design:</h3><ul>
+<li>Don’t use query parameters to alter state</li>
+<li>Don’t use mixed-case paths if you can help it; lowercase is best</li>
+<li>Don’t use implementation-specific extensions in your URIs (.php, .py, .pl, etc.)</li>
+<li>Don’t fall into RPC with your URIs</li>
+<li>Do limit your URI space as much as possible</li>
+<li>Do keep path segments short</li>
+<li>Do prefer either /resource or /resource/; create 301 redirects from the one you don’t use</li>
+<li>Do use query parameters for sub-selection of a resource; i.e. pagination, search queries</li>
+<li>Do move stuff out of the URI that should be in an HTTP header or a body</li>
+</ul>
+<h3 id="General_principles_for_HTTP_method_choice:">General principles for HTTP method choice:</h3><ul>
+<li>Don’t ever use GET to alter state; this is a great way to have the Googlebot ruin your day</li>
+<li>Don’t use PUT unless you are updating an entire resource</li>
+<li>Don’t use PUT unless you can also legitimately do a GET on the same URI</li>
+<li>Don’t use POST to retrieve information that is long-lived or that might be reasonable to cache</li>
+<li>Don’t perform an operation that is not idempotent with PUT</li>
+<li>Do use GET for as much as possible</li>
+<li>Do use POST in preference to PUT when in doubt</li>
+<li>Do use POST whenever you have to do something that feels RPC-like</li>
+<li>Do use PUT for classes of resources that are larger or hierarchical</li>
+<li>Do use DELETE in preference to POST to remove resources</li>
+<li>Do use GET for things like calculations, unless your input is large, in which case use POST</li>
+</ul>
+<h3 id="General_principles_of_web_service_design_with_HTTP:">General principles of web service design with HTTP:</h3><ul>
+<li>Don’t put metadata in the body of a response that should be in a header</li>
+<li>Don’t put metadata in a separate resource unless including it would create significant overhead</li>
+<li>Do use the appropriate status code</li>
+<li>201 Created after creating a resource; resource must exist at the time the response is sent</li>
+<li>202 Accepted after performing an operation successfully or creating a resource asynchronously</li>
+<li>400 Bad Request when someone does an operation on data that’s clearly bogus; for your application this could be a validation error; generally reserve 500 for uncaught exceptions</li>
+<li>403 Forbidden when someone accesses your API in a way that might be malicious or if they aren’t authorized</li>
+<li>405 Method Not Allowed when someone uses POST when they should have used PUT, etc</li>
+<li>413 Request Entity Too Large when someone attempts to send you an unacceptably large file</li>
+<li>418 I’m a teapot when attempting to brew coffee with a teapot</li>
+<li>Do use caching headers whenever you can</li>
+<li>ETag headers are good when you can easily reduce a resource to a hash value</li>
+<li>Last-Modified should indicate to you that keeping around a timestamp of when resources are updated is a good idea</li>
+<li>Cache-Control and Expires should be given sensible values</li>
+<li>Do everything you can to honor caching headers in a request (If-None-Modified, If-Modified-Since)</li>
+<li>Do use redirects when they make sense, but these should be rare for a web service</li>
+</ul>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+<section id="comment">
+  <h1 class="title">comment</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+      </div></footer>
+    </div>
+  </div>
+</article>
+
+  </div>
+  </div>
+  <footer id="footer">
+    <div class="wrap">
+  <div class="inner" style="text-align: center">
+    
+    &copy; 2015 Piotr Buda All Rights Reserved
+    
+
+    / <a href="https://github.com/kywk/hexo-theme-biture">biture</a> for <a href="http://zespia.tw/hexo/">hexo</a>
+    / developed by <a href="http://kywk.github.io/moco/">MooCow (kywk)</a>.
+  </div>
+</div>
+
+  </footer>
+<!-- Le javascript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-62603909-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+<!-- Responsive menu -->
+<script>
+$(document).ready(function() {
+  $("#menu-toggle").click(function(event) {
+    event.preventDefault();
+    if ($(this).hasClass("isShow")) {
+      $("#header").css({position: "fixed"});
+      $("ul.nav-menu").hide();
+      $(this).removeClass("isShow");
+    } else {
+      $("#header").css({position: "static"});
+      $("ul.nav-menu").show();
+      $("html, body").scrollTop(0);
+      $(this).addClass("isShow");
+    }
+    return false;
+  });
+
+  $(window).resize(function() {
+    if ($(window).width() > 700) {
+      $("ul.nav-menu").removeAttr('style');
+    }
+  });
+
+});
+</script>
+
+
+
+<script type="text/javascript">
+var disqus_shortname = 'piotrbuda';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+<link rel="stylesheet" href="/package/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/package/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+<script type="text/javascript">
+(function($){
+  $(".fancybox").fancybox();
+  $(".various").fancybox({
+    maxWidth  : 800,
+    maxHeight : 600,
+    fitToView : false,
+    width   : '70%',
+    height    : '70%',
+    autoSize  : true,
+    closeClick  : false,
+    openEffect  : 'none',
+    closeEffect : 'none'
+  });
+})(jQuery);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Heroku and Java - from newbie to beginner, part 2 | Software Development Ramblings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/pure-min.css" type="text/css">
+  <link rel="stylesheet" href="/css/biture.css" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header">
+    <div class="wrap">
+  <div class="inner">
+    <a class="brand" href="/">Software Development Ramblings</a>
+    <a id="menu-toggle" href="#"><i class="fa fa-bars"></i></a>
+<ul class="nav-menu">
+
+</ul>
+
+<ul class="nav-menu ext-menu">
+
+
+    <li><a href="//github.com/pbuda/">github</a></li>
+
+
+
+    <li><a href="//twitter.com/piotrbuda">twitter</a></li>
+
+
+
+    <li><a href="//pl.linkedin.com/in/piotrbuda">linked-in</a></li>
+
+
+
+    <li><a href="//feeds.feedburner.com/SoftwareDevelopmentRamblings">rss</a></li>
+
+
+  <li><a class="various" href="#fbox-tagcloud">tags</a></li>
+</ul>
+</div>
+
+  </div>
+</div>
+
+<div class="tagcloud" id="fbox-tagcloud" style="margin:10px; display:none; overflow: hidden"><a href="/tags/actors/" style="font-size: 12px;">actors</a><a href="/tags/api/" style="font-size: 12px;">api</a><a href="/tags/capabilities/" style="font-size: 24px;">capabilities</a><a href="/tags/cloud/" style="font-size: 12px;">cloud</a><a href="/tags/concurrency/" style="font-size: 24px;">concurrency</a><a href="/tags/defaults/" style="font-size: 12px;">defaults</a><a href="/tags/google-play/" style="font-size: 12px;">google play</a><a href="/tags/openshift/" style="font-size: 12px;">openshift</a><a href="/tags/play/" style="font-size: 12px;">play</a><a href="/tags/play-store-api/" style="font-size: 12px;">play store api</a><a href="/tags/pony/" style="font-size: 12px;">pony</a><a href="/tags/pony-lang/" style="font-size: 12px;">pony lang</a><a href="/tags/sbt/" style="font-size: 12px;">sbt</a><a href="/tags/scala/" style="font-size: 24px;">scala</a><a href="/tags/spray/" style="font-size: 12px;">spray</a><a href="/tags/store/" style="font-size: 12px;">store</a><a href="/tags/websocket/" style="font-size: 12px;">websocket</a></div>
+
+  </header>
+  <div id="main-content" class="wrap">
+  <div class="inner">
+    <article class="post">
+  <div class="pure-g">
+
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2012-03-17T00:13:00.000Z">
+        <div class="day">17</div>
+        <div class="month">Mar 2012</div>
+      </time></div>
+      <div class="article-tags">
+        
+
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title">Heroku and Java - from newbie to beginner, part 2</h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <h3 id="The_problem">The problem</h3><p>So after a few days I could get back to my little Recaps project. I started with checking logs and found something like this:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2012<span class="tag">-03-04T01</span><span class="pseudo">:52</span><span class="pseudo">:51+00</span><span class="pseudo">:00</span> <span class="tag">heroku</span><span class="attr_selector">[web.1]</span>: <span class="tag">Idling</span></span><br><span class="line">2012<span class="tag">-03-04T01</span><span class="pseudo">:52</span><span class="pseudo">:53+00</span><span class="pseudo">:00</span> <span class="tag">heroku</span><span class="attr_selector">[web.1]</span>: <span class="tag">Stopping</span> <span class="tag">process</span> <span class="tag">with</span> <span class="tag">SIGTERM</span></span><br><span class="line">2012<span class="tag">-03-04T01</span><span class="pseudo">:53</span><span class="pseudo">:03+00</span><span class="pseudo">:00</span> <span class="tag">heroku</span><span class="attr_selector">[web.1]</span>: <span class="tag">Error</span> <span class="tag">R12</span> (<span class="tag">Exit</span> <span class="tag">timeout</span>) <span class="tag">-</span>&gt; <span class="tag">Process</span> <span class="tag">failed</span> <span class="tag">to</span> <span class="tag">exit</span> <span class="tag">within</span> 10 <span class="tag">seconds</span> <span class="tag">of</span> <span class="tag">SIGTERM</span></span><br><span class="line">2012<span class="tag">-03-04T01</span><span class="pseudo">:53</span><span class="pseudo">:03+00</span><span class="pseudo">:00</span> <span class="tag">heroku</span><span class="attr_selector">[web.1]</span>: <span class="tag">Stopping</span> <span class="tag">process</span> <span class="tag">with</span> <span class="tag">SIGKILL</span></span><br></pre></td></tr></table></figure>
+<p>I don’t know what you think but whenever I see ‘Error’ in my logs I get concerned. So I decided to remove that nasty line. What transpired was not pleasant.</p>
+<h3 id="The_solution">The solution</h3><p>This seems like a simple problem. I started up with finding what this SIGTERM is all about. I knew it was Linux signal, I just wanted to know what Heroku is actually doing. So basically sometimes Heroku just sends SIGTERM to your process so that it’s allowed to gracefully shut down. This is very simple.</p>
+<p>As I mentioned in my last post, I decided to use Jetty instead of Grizzly. At first I decided to use jetty-runner to run my web application and it worked fine, resources were scanned as Jersey servlet started up. Deploying to Heroku was also easy and with modified Procfile the application started up.</p>
+<p>Nevertheless the application did not react correctly to SIGTERM, so without delving deeper in jetty-runner configuration, I decided to just use the embedded Jetty server.<br>It’s very simple and running foreman start made the application actually start. So without further consideration I just deployed the changed application to Heroku. To check whether the error appears again, after first startup I just did heroku restart and connected to logs in another terminal. But the exit timeout error message was still there. My mistake there - I did not test the application whether it will exit properly when using foreman. So again, foreman start and then ctrl+c just to see what happens (later I tried kill -s TERM procand got similar output):</p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">pbu@pbudesk ~/recaps $ foreman start</span><br><span class="line">21:57:27 web.1     | started with pid 9603</span><br><span class="line">21:57:27 web.1     | 0    [main] INFO  org.eclipse.jetty.server.Server  - jetty-8.1.1.v20120215</span><br><span class="line">21:57:27 web.1     | 110  [main] INFO  org.eclipse.jetty.webapp.StandardDescriptorProcessor  - NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet</span><br><span class="line">21:57:27 web.1     | 132  [main] INFO  org.eclipse.jetty.server.handler.ContextHandler  - started o.e.j.w.WebAppContext</span><span class="expression">&#123;/,<span class="variable">file</span>:<span class="end-block">/home</span><span class="end-block">/pbu</span><span class="end-block">/Devel</span><span class="end-block">/IdeaProjects</span><span class="end-block">/recaps</span><span class="end-block">/webmodule</span><span class="end-block">/src</span><span class="end-block">/main</span><span class="end-block">/webapp</span>/&#125;</span><span class="xml">,webmodule/src/main/webapp</span><br><span class="line">21:57:27 web.1     | 133  [main] INFO  org.eclipse.jetty.server.handler.ContextHandler  - started o.e.j.w.WebAppContext</span><span class="expression">&#123;/,<span class="variable">file</span>:<span class="end-block">/home</span><span class="end-block">/pbu</span><span class="end-block">/Devel</span><span class="end-block">/IdeaProjects</span><span class="end-block">/recaps</span><span class="end-block">/webmodule</span><span class="end-block">/src</span><span class="end-block">/main</span><span class="end-block">/webapp</span>/&#125;</span><span class="xml">,webmodule/src/main/webapp</span><br><span class="line">21:57:27 web.1     | 183  [main] INFO  org.eclipse.jetty.server.AbstractConnector  - Started SelectChannelConnector@0.0.0.0:5000</span><br><span class="line">^CSIGINT received</span><br><span class="line">21:57:57 system    | sending SIGTERM to all processes</span><br><span class="line">21:57:57 system    | sending SIGTERM to pid 9603</span><br><span class="line">21:57:57 web.1     | process terminated</span><br><span class="line">pbu@pbudesk ~/recaps $</span></span><br></pre></td></tr></table></figure>
+<p>OK, so when foreman receives SIGINT it sends SIGTERM to all processes, cool - probably Heroku dynos behave the same. Still, it wasn’t a graceful shutdown, but Jetty has a <a href="http://docs.codehaus.org/display/JETTY/How+to+gracefully+shutdown" target="_blank" rel="external">graceful shutdown section</a> that mentions two nice properties: gracefulShutdown and stopAtShutdown. The modified class looks like this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Serve</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> port = Integer.valueOf(System.getenv(<span class="string">"PORT"</span>));</span><br><span class="line"></span><br><span class="line">        Server jetty = <span class="keyword">new</span> Server(port);</span><br><span class="line"></span><br><span class="line">        WebAppContext context = <span class="keyword">new</span> WebAppContext();</span><br><span class="line">        context.setContextPath(<span class="string">"/"</span>);</span><br><span class="line">        String webapp = <span class="string">"webmodule/src/main/webapp"</span>;</span><br><span class="line">        context.setWar(webapp);</span><br><span class="line">        context.setResourceBase(webapp);</span><br><span class="line"></span><br><span class="line">        jetty.setHandler(context);</span><br><span class="line"></span><br><span class="line">        jetty.setGracefulShutdown(<span class="number">1000</span>);</span><br><span class="line">        jetty.setStopAtShutdown(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        jetty.start();</span><br><span class="line">        jetty.join();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Running foreman again and using ctrl+c proves this to be working! Great!</p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">pbu@pbudesk ~/recaps $ foreman start</span><br><span class="line">22:11:47 web.1     | started with pid 9863</span><br><span class="line">22:11:47 web.1     | 0    [main] INFO  org.eclipse.jetty.server.Server  - jetty-8.1.1.v20120215</span><br><span class="line">22:11:47 web.1     | 110  [main] INFO  org.eclipse.jetty.webapp.StandardDescriptorProcessor  - NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet</span><br><span class="line">22:11:47 web.1     | 131  [main] INFO  org.eclipse.jetty.server.handler.ContextHandler  - started o.e.j.w.WebAppContext</span><span class="expression">&#123;/,<span class="variable">file</span>:<span class="end-block">/home</span><span class="end-block">/pbu</span><span class="end-block">/Devel</span><span class="end-block">/IdeaProjects</span><span class="end-block">/recaps</span><span class="end-block">/webmodule</span><span class="end-block">/src</span><span class="end-block">/main</span><span class="end-block">/webapp</span>/&#125;</span><span class="xml">,webmodule/src/main/webapp</span><br><span class="line">22:11:47 web.1     | 132  [main] INFO  org.eclipse.jetty.server.handler.ContextHandler  - started o.e.j.w.WebAppContext</span><span class="expression">&#123;/,<span class="variable">file</span>:<span class="end-block">/home</span><span class="end-block">/pbu</span><span class="end-block">/Devel</span><span class="end-block">/IdeaProjects</span><span class="end-block">/recaps</span><span class="end-block">/webmodule</span><span class="end-block">/src</span><span class="end-block">/main</span><span class="end-block">/webapp</span>/&#125;</span><span class="xml">,webmodule/src/main/webapp</span><br><span class="line">22:11:48 web.1     | 183  [main] INFO  org.eclipse.jetty.server.AbstractConnector  - Started SelectChannelConnector@0.0.0.0:5000</span><br><span class="line">^C22:11:49 web.1     | 1969 [Thread-1] INFO  org.eclipse.jetty.server.Server  - Graceful shutdown SelectChannelConnector@0.0.0.0:5000</span><br><span class="line">22:11:49 web.1     | 1970 [Thread-1] INFO  org.eclipse.jetty.server.Server  - Graceful shutdown o.e.j.w.WebAppContext</span><span class="expression">&#123;/,<span class="variable">file</span>:<span class="end-block">/home</span><span class="end-block">/pbu</span><span class="end-block">/Devel</span><span class="end-block">/IdeaProjects</span><span class="end-block">/recaps</span><span class="end-block">/webmodule</span><span class="end-block">/src</span><span class="end-block">/main</span><span class="end-block">/webapp</span>/&#125;</span><span class="xml">,webmodule/src/main/webapp</span><br><span class="line">SIGINT received</span><br><span class="line">22:11:49 system    | sending SIGTERM to all processes</span><br><span class="line">22:11:49 system    | sending SIGTERM to pid 9863</span><br><span class="line">22:11:50 web.1     | 2982 [Thread-1] INFO  org.eclipse.jetty.server.handler.ContextHandler  - stopped o.e.j.w.WebAppContext</span><span class="expression">&#123;/,<span class="variable">file</span>:<span class="end-block">/home</span><span class="end-block">/pbu</span><span class="end-block">/Devel</span><span class="end-block">/IdeaProjects</span><span class="end-block">/recaps</span><span class="end-block">/webmodule</span><span class="end-block">/src</span><span class="end-block">/main</span><span class="end-block">/webapp</span>/&#125;</span><span class="xml">,webmodule/src/main/webapp</span><br><span class="line">22:11:50 web.1     | process terminated</span><br><span class="line">pbu@pbudesk ~/recaps $</span><br><span class="line">So off to deploy it to the cloud! Again, deploy, heroku restart and watch logs... but it doesn't work.</span></span><br></pre></td></tr></table></figure>
+<h3 id="Different_way">Different way</h3><p>After initial failure I’ve tried a different approach. I found out that you can register shutdown hooks - very easy thing. To do that, just register a new thread with Runtime.getRuntime().addShutdownHook(Thread) method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Serve</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Runtime.getRuntime().addShutdownHook(<span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"Shutting down by shutdown hook"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">int</span> port = Integer.valueOf(System.getenv(<span class="string">"PORT"</span>));</span><br><span class="line"></span><br><span class="line">        Server jetty = <span class="keyword">new</span> Server(port);</span><br><span class="line"></span><br><span class="line">        WebAppContext context = <span class="keyword">new</span> WebAppContext();</span><br><span class="line">        context.setContextPath(<span class="string">"/"</span>);</span><br><span class="line">        String webapp = <span class="string">"webmodule/src/main/webapp"</span>;</span><br><span class="line">        context.setWar(webapp);</span><br><span class="line">        context.setResourceBase(webapp);</span><br><span class="line"></span><br><span class="line">        jetty.setHandler(context);</span><br><span class="line"></span><br><span class="line">        jetty.setGracefulShutdown(<span class="number">1000</span>);</span><br><span class="line">        jetty.setStopAtShutdown(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        jetty.start();</span><br><span class="line">        jetty.join();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Final test with foreman proves it to be working too, however once again it doesn’t work on Heroku.</p>
+<p>At this point, I have no idea how to get rid of that timeout. It is not very important, I just wanted to check whether I can somehow react to it, but to no avail. For now I guess I’ll just contact Heroku, maybe they’ll help. Another option could be trying embedded Tomcat, but maybe at a later time. For now, I have other things to do, like checking out <a href="http://jelastic.com/" target="_blank" rel="external">Jelastic</a>.</p>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+<section id="comment">
+  <h1 class="title">comment</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+      </div></footer>
+    </div>
+  </div>
+</article>
+
+  </div>
+  </div>
+  <footer id="footer">
+    <div class="wrap">
+  <div class="inner" style="text-align: center">
+    
+    &copy; 2015 Piotr Buda All Rights Reserved
+    
+
+    / <a href="https://github.com/kywk/hexo-theme-biture">biture</a> for <a href="http://zespia.tw/hexo/">hexo</a>
+    / developed by <a href="http://kywk.github.io/moco/">MooCow (kywk)</a>.
+  </div>
+</div>
+
+  </footer>
+<!-- Le javascript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-62603909-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+<!-- Responsive menu -->
+<script>
+$(document).ready(function() {
+  $("#menu-toggle").click(function(event) {
+    event.preventDefault();
+    if ($(this).hasClass("isShow")) {
+      $("#header").css({position: "fixed"});
+      $("ul.nav-menu").hide();
+      $(this).removeClass("isShow");
+    } else {
+      $("#header").css({position: "static"});
+      $("ul.nav-menu").show();
+      $("html, body").scrollTop(0);
+      $(this).addClass("isShow");
+    }
+    return false;
+  });
+
+  $(window).resize(function() {
+    if ($(window).width() > 700) {
+      $("ul.nav-menu").removeAttr('style');
+    }
+  });
+
+});
+</script>
+
+
+
+<script type="text/javascript">
+var disqus_shortname = 'piotrbuda';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+<link rel="stylesheet" href="/package/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/package/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+<script type="text/javascript">
+(function($){
+  $(".fancybox").fancybox();
+  $(".various").fancybox({
+    maxWidth  : 800,
+    maxHeight : 600,
+    fitToView : false,
+    width   : '70%',
+    height    : '70%',
+    autoSize  : true,
+    closeClick  : false,
+    openEffect  : 'none',
+    closeEffect : 'none'
+  });
+})(jQuery);
+</script>
+
+
+</body>
+</html>
