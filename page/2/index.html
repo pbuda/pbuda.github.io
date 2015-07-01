@@ -63,6 +63,52 @@
 
     <!-- article: meta -->
     <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2012-10-28T22:00:00.000Z">
+        <div class="day">28</div>
+        <div class="month">Oct 2012</div>
+      </time></div>
+      <div class="article-tags">
+        
+
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title"><a href="/2012/10/scala-case-classes-and-annotations-part-2.html">Scala case classes and annotations, part 2</a></h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <p>Before proceeding please remember that I’m learning Scala and what follows is the result of lack of proper knowledge :)</p>
+<p>In the previous article I wrote how to specify where annotations should be applied. But if you remember an example class I ported from Java to Scala there was one thing left to do and that was using constants in annotations.</p>
+<p>In Java you can easily do<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String USER_ID = <span class="string">"userId"</span>;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Field</span>(USER_ID)</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> userId;</span><br></pre></td></tr></table></figure><br>but in Scala this doesn’t work.</p>
+<p>First of all I tried adding constant in a class like this:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanningBookmark</span>(</span>@(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">USER_ID</span>) userId: <span class="type">Long</span>,</span><br><span class="line">                            @(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">STATUS_ID</span>) statusId: <span class="type">Long</span>) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">USER_ID</span>:</span><span class="type">String</span> = <span class="string">"userId"</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">STATUS_ID</span>:</span><span class="type">String</span> = <span class="string">"statusId"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>but in Scala USER_ID and STATUS_ID are not resolved. Since normally an object is used for defining static content I then tried using a companion object to store those constants:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanningBookmark</span>(</span>@(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">USER_ID</span>) userId: <span class="type">Long</span>,</span><br><span class="line">                            @(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">STATUS_ID</span>) statusId: <span class="type">Long</span>)</span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ScanningBookmark</span> &#123;</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">USER_ID</span>:</span><span class="type">String</span> = <span class="string">"userId"</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">STATUS_ID</span>:</span><span class="type">String</span> = <span class="string">"statusId"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>but this also didn’t work as it gave the following error:</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">error</span>: annotation argument needs to be a constant; <span class="attribute">found</span>: ScanningBookmark.USER_ID</span><br><span class="line">case class <span class="function">ScanningBookmark</span>(@(Field<span class="variable">@field</span>)(ScanningBookmark.USER_ID) <span class="attribute">userId</span>: Long,</span><br></pre></td></tr></table></figure>
+<p>At this point I gave up. I tried looking for answer at Google but didn’t find it - or as it occured later - just missed it.</p>
+<p>The problem here is that in Scala a constant doesn’t have type in definition. The last thing necessary to make those constants work was removing the String type from definitions:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanningBookmark</span>(</span>@(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">USER_ID</span>) userId: <span class="type">Long</span>,</span><br><span class="line">                            @(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">STATUS_ID</span>) statusId: <span class="type">Long</span>)</span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ScanningBookmark</span> &#123;</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">USER_ID</span> =</span> <span class="string">"userId"</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">STATUS_ID</span> =</span> <span class="string">"statusId"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>Now it compiles and works as expected.</p>
+<p>This is the end of my short experience with Scala and annotations.</p>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+
+      </div></footer>
+    </div>
+  </div>
+</article>
+
+
+  <article class="post">
+  <div class="pure-g">
+
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
       <div class="date"><time datetime="2012-10-28T18:23:00.000Z">
         <div class="day">28</div>
         <div class="month">Oct 2012</div>
@@ -455,50 +501,6 @@
 <p>My first attempt of using this code was successful and running on the device was easy - I simply added a button that invoked their method and it worked. However when I used this solution in my pet project it suddenly stopped working properly. The problem was happening when I was invalidating the auth token - recursive call would fail with IllegalStateException saying that calling that method on main thread would lead to a deadlock.</p>
 <p>At first I didn’t know what to do - I am, after all, Android newbie. I spent some time trying to find out why my first code worked and second didn’t and I found a single difference - I used minSdkVersion in AndroidManifest.xml for my pet project. I have no idea why this happens, I don’t even know where to start looking. But I created a simple workaround to solve the problem - I used AsyncTask to create a background loader and it works very well now, not to mention I’ve had a good time reading about threading in Android.</p>
 <p>The project with workaround can be found at <a href="https://github.com/piotrbudaeu/android-authtoken" target="_blank" rel="external">GitHub</a></p>
-
-        
-      </div>
-      <footer><div class="article-comment">
-        
-
-      </div></footer>
-    </div>
-  </div>
-</article>
-
-
-  <article class="post">
-  <div class="pure-g">
-
-    <!-- article: meta -->
-    <div class="pure-u-1-12 article-meta">
-      <div class="date"><time datetime="2012-04-11T10:01:00.000Z">
-        <div class="day">11</div>
-        <div class="month">Apr 2012</div>
-      </time></div>
-      <div class="article-tags">
-        
-
-      </div>
-    </div>
-
-    <!-- article: main -->
-    <div class="pure-u-11-12">
-      <header><div class="article-title">
-        
-  
-    <h1 class="title"><a href="/2012/04/commenting-the-code-is-obsolete.html">Commenting the code is obsolete</a></h1>
-  
-
-      </div></header>
-      <div class="article-entry">
-        
-          <p>Some time ago I had a few visits from fellow developers asking me questions about that I supposedly created. Since I obviously created some of that code months or years ago, I often couldn’t answer their questions because either my explanations were false (changed requirements) or I didn’t even know about that particular case (new code). It struck me that they came to me to ask these questions because I was placed as the author of the class in Javadoc…</p>
-<p>More recently I’ve been in situation when our team leader told us that we’re not putting enough comments in our classes and the we could at least provide the @author Javadoc comment (or ASDoc in that case) so that everyone knows who to talk to about this code.</p>
-<p>Revelation came to me sometime after that statement - why the hell do I need author information in a file?! I am checking in my code to a VCS which provides that information out of the box, moreover when the code changes it can report who changed the code! @author becomes meaningless after some time, VCS history does not - so use VCS instead.</p>
-<p>This also applies to other comments (IMO). Instead of creating some code and heavily comment what it does (bad) I prefer to write smaller methods that tell what they’re doing (good). The only thing I think a comment is necessary for is method arguments, but I could also omit them when I call my arguments with meaningful names. This does not apply to function arguments, because I have to comment that function arguments. But that can also lead to something like this:</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">* @param callback function to call with signature </span><br><span class="line">*                 &lt;code&gt;function(arg1:String, arg2:Object):void&lt;/code&gt;</span><br><span class="line">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">myFunction</span><span class="params">(callback:Function)</span><span class="type">:void</span> </span>&#123;</span><br><span class="line">  callback(arg1, arg2, arg3)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Summary: instead of extensive comments, write better code and use tools that you’re given.</p>
 
         
       </div>

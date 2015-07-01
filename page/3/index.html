@@ -63,6 +63,50 @@
 
     <!-- article: meta -->
     <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2012-04-11T10:01:00.000Z">
+        <div class="day">11</div>
+        <div class="month">Apr 2012</div>
+      </time></div>
+      <div class="article-tags">
+        
+
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title"><a href="/2012/04/commenting-the-code-is-obsolete.html">Commenting the code is obsolete</a></h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <p>Some time ago I had a few visits from fellow developers asking me questions about that I supposedly created. Since I obviously created some of that code months or years ago, I often couldn’t answer their questions because either my explanations were false (changed requirements) or I didn’t even know about that particular case (new code). It struck me that they came to me to ask these questions because I was placed as the author of the class in Javadoc…</p>
+<p>More recently I’ve been in situation when our team leader told us that we’re not putting enough comments in our classes and the we could at least provide the @author Javadoc comment (or ASDoc in that case) so that everyone knows who to talk to about this code.</p>
+<p>Revelation came to me sometime after that statement - why the hell do I need author information in a file?! I am checking in my code to a VCS which provides that information out of the box, moreover when the code changes it can report who changed the code! @author becomes meaningless after some time, VCS history does not - so use VCS instead.</p>
+<p>This also applies to other comments (IMO). Instead of creating some code and heavily comment what it does (bad) I prefer to write smaller methods that tell what they’re doing (good). The only thing I think a comment is necessary for is method arguments, but I could also omit them when I call my arguments with meaningful names. This does not apply to function arguments, because I have to comment that function arguments. But that can also lead to something like this:</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">* @param callback function to call with signature </span><br><span class="line">*                 &lt;code&gt;function(arg1:String, arg2:Object):void&lt;/code&gt;</span><br><span class="line">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">myFunction</span><span class="params">(callback:Function)</span><span class="type">:void</span> </span>&#123;</span><br><span class="line">  callback(arg1, arg2, arg3)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Summary: instead of extensive comments, write better code and use tools that you’re given.</p>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+
+      </div></footer>
+    </div>
+  </div>
+</article>
+
+
+  <article class="post">
+  <div class="pure-g">
+
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
       <div class="date"><time datetime="2012-03-17T00:13:00.000Z">
         <div class="day">17</div>
         <div class="month">Mar 2012</div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2015 | Software Development Ramblings</title>
+  <title>ponylang-intellij-plugin | Software Development Ramblings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   
@@ -57,51 +57,56 @@
   </header>
   <div id="main-content" class="wrap">
   <div class="inner">
-    
-<!--<h4 class="archive-title">tag: 2015</h4>-->
+    <article class="post">
+  <div class="pure-g">
 
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2015-07-01T11:10:20.000Z">
+        <div class="day">1</div>
+        <div class="month">Jul 2015</div>
+      </time></div>
+      <div class="article-tags">
+        
 
-  <div class="archive">
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-07-01T11:10:20.000Z"><a href="/2015/07/intellij-plugin-to-support-pony.html">2015-07-01</a></time>
-            
-              <h1 class="title"><a href="/2015/07/intellij-plugin-to-support-pony.html">ponylang-intellij-plugin</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-06-30T11:18:20.000Z"><a href="/2015/06/pony-lang-capabilities-understanding-defaults.html">2015-06-30</a></time>
-            
-              <h1 class="title"><a href="/2015/06/pony-lang-capabilities-understanding-defaults.html">Pony lang capabilities - understanding the defaults</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-05-13T22:00:00.000Z"><a href="/2015/05/implementing-chat-application-with-pony-lang.html">2015-05-14</a></time>
-            
-              <h1 class="title"><a href="/2015/05/implementing-chat-application-with-pony-lang.html">Implementing chat application with Pony lang</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title">ponylang-intellij-plugin</h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <p>I’m a Java/Scala developer and I am used to Intellij Idea for my work. When I started my interest in Pony, I used Sublime Text for a short while and then switched to Atom for code highlighting. But what I miss<br>in both these tools are all the information that Intellij provides - code completion, inspection, refactoring, analysis.</p>
+<p>I decided to start my own Intellij plugin to support Pony language on that platform. There is a <a href="http://www.jetbrains.org/intellij/sdk/docs/index.html" target="_blank" rel="external">nice tutorial</a> on adding new language support for Intellij so I started with the basics and hit a wall. This tutorial mentions using the GrammarKit plugin which generates a lot of boilerplate from BNF grammars. The issue I had was that the grammar file in Pony repository was Antlr v3 grammar and I spent a few days investigating how to convert one to another. After some unsuccessful attempts I had to postpone work on this little project.</p>
+<p>Today I was playing with Pony and noticed this small line in the output of <code>ponyc --help</code> - <code>--bnf Print out the Pony grammar as human readable BNF.</code> I was shocked - I don’t know when this was implemented (current Pony version is 0.1.7) but it saves the plugin development! It still wasn’t the format expected by GrammarKit plugin but it was very easy to adapt. After a few moments I had a grammar file with generated tokens and all stuff required by the parser!</p>
+<p>That’s just one small step towards the first version of the plugin. The features I’d like to have in the very first published version are: syntax highlighting, pony files support, run configuration to build the project.<br>This would allow people to start developing Pony applications from within Intellij. There’s still a lot of work to do, so any help is appreciated. The project is located in <a href="https://github.com/pbuda/intellij-pony" target="_blank" rel="external">this GitHub repository</a>. Fork away!</p>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+<section id="comment">
+  <h1 class="title">comment</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+  
+</section>
 
 
+      </div></footer>
+    </div>
+  </div>
+</article>
 
   </div>
   </div>
@@ -171,7 +176,7 @@ var disqus_shortname = 'piotrbuda';
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
   dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }());
 </script>

@@ -63,6 +63,48 @@
 
     <!-- article: meta -->
     <div class="pure-u-1-12 article-meta">
+      <div class="date"><time datetime="2015-07-01T11:10:20.000Z">
+        <div class="day">1</div>
+        <div class="month">Jul 2015</div>
+      </time></div>
+      <div class="article-tags">
+        
+
+      </div>
+    </div>
+
+    <!-- article: main -->
+    <div class="pure-u-11-12">
+      <header><div class="article-title">
+        
+  
+    <h1 class="title"><a href="/2015/07/intellij-plugin-to-support-pony.html">ponylang-intellij-plugin</a></h1>
+  
+
+      </div></header>
+      <div class="article-entry">
+        
+          <p>I’m a Java/Scala developer and I am used to Intellij Idea for my work. When I started my interest in Pony, I used Sublime Text for a short while and then switched to Atom for code highlighting. But what I miss<br>in both these tools are all the information that Intellij provides - code completion, inspection, refactoring, analysis.</p>
+<p>I decided to start my own Intellij plugin to support Pony language on that platform. There is a <a href="http://www.jetbrains.org/intellij/sdk/docs/index.html" target="_blank" rel="external">nice tutorial</a> on adding new language support for Intellij so I started with the basics and hit a wall. This tutorial mentions using the GrammarKit plugin which generates a lot of boilerplate from BNF grammars. The issue I had was that the grammar file in Pony repository was Antlr v3 grammar and I spent a few days investigating how to convert one to another. After some unsuccessful attempts I had to postpone work on this little project.</p>
+<p>Today I was playing with Pony and noticed this small line in the output of <code>ponyc --help</code> - <code>--bnf Print out the Pony grammar as human readable BNF.</code> I was shocked - I don’t know when this was implemented (current Pony version is 0.1.7) but it saves the plugin development! It still wasn’t the format expected by GrammarKit plugin but it was very easy to adapt. After a few moments I had a grammar file with generated tokens and all stuff required by the parser!</p>
+<p>That’s just one small step towards the first version of the plugin. The features I’d like to have in the very first published version are: syntax highlighting, pony files support, run configuration to build the project.<br>This would allow people to start developing Pony applications from within Intellij. There’s still a lot of work to do, so any help is appreciated. The project is located in <a href="https://github.com/pbuda/intellij-pony" target="_blank" rel="external">this GitHub repository</a>. Fork away!</p>
+
+        
+      </div>
+      <footer><div class="article-comment">
+        
+
+      </div></footer>
+    </div>
+  </div>
+</article>
+
+
+  <article class="post">
+  <div class="pure-g">
+
+    <!-- article: meta -->
+    <div class="pure-u-1-12 article-meta">
       <div class="date"><time datetime="2015-06-30T11:18:20.000Z">
         <div class="day">30</div>
         <div class="month">Jun 2015</div>
@@ -494,52 +536,6 @@
 <p>There were a few things I didn’t like though. The difficult client didn’t appear that difficult after all. I expected the client to be a little more aggresive, inconsistent (the ‘client’ had three representatives and on each meeting another representative was present, and mostly agreed with his/her colegues) and impatient. But apparently some previous groups had problems already and this workshop was meant to be fun and not hardcore :) I can live with that.</p>
 <p>Another ‘thing’ was that shortly after the workshop was over, everyone was gone. We couldn’t talk more about what happened and share more experiences, not only regarding workshops. I’d definately fix that next time because for me this was the worst thing to happen.</p>
 <p>Overall, it was one of the best days lately. Lots of laughter, lots of good experience and lots of great people to work with. I think I will attend Warsjawa 2013 :)</p>
-
-        
-      </div>
-      <footer><div class="article-comment">
-        
-
-      </div></footer>
-    </div>
-  </div>
-</article>
-
-
-  <article class="post">
-  <div class="pure-g">
-
-    <!-- article: meta -->
-    <div class="pure-u-1-12 article-meta">
-      <div class="date"><time datetime="2012-10-28T22:00:00.000Z">
-        <div class="day">28</div>
-        <div class="month">Oct 2012</div>
-      </time></div>
-      <div class="article-tags">
-        
-
-      </div>
-    </div>
-
-    <!-- article: main -->
-    <div class="pure-u-11-12">
-      <header><div class="article-title">
-        
-  
-    <h1 class="title"><a href="/2012/10/scala-case-classes-and-annotations-part-2.html">Scala case classes and annotations, part 2</a></h1>
-  
-
-      </div></header>
-      <div class="article-entry">
-        
-          <p>Before proceeding please remember that I’m learning Scala and what follows is the result of lack of proper knowledge :)</p>
-<p>In the previous article I wrote how to specify where annotations should be applied. But if you remember an example class I ported from Java to Scala there was one thing left to do and that was using constants in annotations.</p>
-<p>In Java you can easily do<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String USER_ID = <span class="string">"userId"</span>;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Field</span>(USER_ID)</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> userId;</span><br></pre></td></tr></table></figure><br>but in Scala this doesn’t work.</p>
-<p>First of all I tried adding constant in a class like this:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanningBookmark</span>(</span>@(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">USER_ID</span>) userId: <span class="type">Long</span>,</span><br><span class="line">                            @(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">STATUS_ID</span>) statusId: <span class="type">Long</span>) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">USER_ID</span>:</span><span class="type">String</span> = <span class="string">"userId"</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">STATUS_ID</span>:</span><span class="type">String</span> = <span class="string">"statusId"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>but in Scala USER_ID and STATUS_ID are not resolved. Since normally an object is used for defining static content I then tried using a companion object to store those constants:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanningBookmark</span>(</span>@(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">USER_ID</span>) userId: <span class="type">Long</span>,</span><br><span class="line">                            @(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">STATUS_ID</span>) statusId: <span class="type">Long</span>)</span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ScanningBookmark</span> &#123;</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">USER_ID</span>:</span><span class="type">String</span> = <span class="string">"userId"</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">STATUS_ID</span>:</span><span class="type">String</span> = <span class="string">"statusId"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>but this also didn’t work as it gave the following error:</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">error</span>: annotation argument needs to be a constant; <span class="attribute">found</span>: ScanningBookmark.USER_ID</span><br><span class="line">case class <span class="function">ScanningBookmark</span>(@(Field<span class="variable">@field</span>)(ScanningBookmark.USER_ID) <span class="attribute">userId</span>: Long,</span><br></pre></td></tr></table></figure>
-<p>At this point I gave up. I tried looking for answer at Google but didn’t find it - or as it occured later - just missed it.</p>
-<p>The problem here is that in Scala a constant doesn’t have type in definition. The last thing necessary to make those constants work was removing the String type from definitions:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanningBookmark</span>(</span>@(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">USER_ID</span>) userId: <span class="type">Long</span>,</span><br><span class="line">                            @(<span class="type">Field</span><span class="annotation">@field</span>)(<span class="type">ScanningBookmark</span>.<span class="type">STATUS_ID</span>) statusId: <span class="type">Long</span>)</span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ScanningBookmark</span> &#123;</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">USER_ID</span> =</span> <span class="string">"userId"</span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">val</span> <span class="title">STATUS_ID</span> =</span> <span class="string">"statusId"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>Now it compiles and works as expected.</p>
-<p>This is the end of my short experience with Scala and annotations.</p>
 
         
       </div>
